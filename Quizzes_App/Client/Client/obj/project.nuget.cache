@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "0qw3UxSxiSAjdlmegVvQmq6qRR+Pk7A2BfcYCg9/xkppj+OieTdHn69/C0YZbwNkI1A7+4pwEFNk3cWRV00tEg==",
+  "dgSpecHash": "MoC8kUDBDbkPJ2hif8PdkcFINfe3/oSmnHwoE3pnUDTiepdqMP167nWobBtrSa+c8Rpcv52kfN4IbLhMwrzE3g==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\Client.csproj",
+  "projectFilePath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\Client.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tatiana\\.nuget\\packages\\materialdesigncolors\\2.1.4\\materialdesigncolors.2.1.4.nupkg.sha512",
     "C:\\Users\\Tatiana\\.nuget\\packages\\materialdesignthemes\\4.9.0\\materialdesignthemes.4.9.0.nupkg.sha512",

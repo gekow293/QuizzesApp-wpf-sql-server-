@@ -13,7 +13,6 @@ namespace Server.Views
     {
         public string Address { get; set; } // IP адресс
         public string Port { get; set; }    // Порт
-
         public string Error => throw new System.NotImplementedException();
 
         /// <summary>
@@ -82,11 +81,6 @@ namespace Server.Views
                 AppConfigManager.UpdateConfigParameter("ip_address", Address.ToString());
                 AppConfigManager.UpdateConfigParameter("port", Port.ToString());
                 DialogResult = true;
-
-                //using(var db = new DataContext())
-                //{
-
-                //}
             }
         }
     }

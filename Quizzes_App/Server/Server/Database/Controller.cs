@@ -19,8 +19,6 @@ namespace Server.Database
     /// </summary>
     public class Controller
     {
-        public event EventHandler<string> AddToLog; // Событие записи в лог
-
         public Controller()
         {
         }
@@ -32,27 +30,21 @@ namespace Server.Database
         /// </summary>
         /// <param name="quiz">тест</param>
         /// <returns></returns>
-        public async Task UpdateQuiz(object quiz)
+        public async Task<int> UpdateQuiz(Quiz? quiz)
         {
-            if(quiz != null)
-                await Task.Run( async () =>
+            var i = 0;
+            if (quiz != null)
+                await Task.Run(async () =>
                 {
-                    using (DataContext db = new DataContext())
-                    {
-                        if (quiz is Quiz q)
-                        {
-                            if (q.Id != 0)
-                            {
-                                db.Quizzes.Update(q);
-                            }
-                            else
-                            {
-                                await db.Quizzes.AddAsync(q);
-                            }
-                        }
-                        await db.SaveChangesAsync();
-                    }
+                    using var db = new DataContext();
+
+                        if (quiz.Id != 0)
+                            _ = db.Quizzes.Update(quiz);
+                        else
+                            _ = db.Quizzes.AddAsync(quiz);
+                    i = await db.SaveChangesAsync();
                 });
+            return i;
         }
 
         /// <summary>
@@ -60,18 +52,22 @@ namespace Server.Database
         /// </summary>
         /// <param name="quiz">тест</param>
         /// <returns></returns>
-        public async Task DeleteQuiz(object quiz)
+        public async Task<int> DeleteQuiz(object quiz)
         {
+            int i = 0;
             if(quiz != null)
                 await Task.Run(async () =>
                 {
+                    using var db = new DataContext();
+
                     if (quiz is Quiz q && q.Id != 0)
-                        using (DataContext db = new DataContext())
-                        {
-                            _ = db.Quizzes.Remove(q);
-                            await db.SaveChangesAsync();
-                        }
+                    {
+                        _ = db.Quizzes.Remove(q);
+                        i = await db.SaveChangesAsync();
+                    }
                 });
+
+            return i;
         }
 
         /// <summary>
@@ -85,32 +81,23 @@ namespace Server.Database
 
             await Task.Run( async () => 
             {
-                using (DataContext db = new DataContext())
+                using var db = new DataContext();
+                var quizList = new List<Quiz>();
+
+                foreach (var q in db.Quizzes)
+                    quizList.Add(q);
+
+                foreach (var ql in quizList)
                 {
-                    var quizList = new List<Quiz>();
+                    var userQuiz = await db.UserQuizzes.FirstOrDefaultAsync(x => x.QuizId == ql.Id && x.User.UserName == client.Login);
+                    QuizVM qVM;
 
-                    foreach (var q in db.Quizzes)
-                    {
-                        quizList.Add(q);
-                    }
+                    if (userQuiz != null)
+                        qVM = new QuizVM(ql) { Passing = userQuiz?.Passing };
+                    else
+                        qVM = new QuizVM(ql) { Passing = "False" };
 
-                    foreach (var ql in quizList)
-                    {
-                        var userQuiz = await db.UserQuizzes.FirstOrDefaultAsync(x => x.QuizId == ql.Id && x.User.UserName == client.Login);
-
-                        QuizVM qVM;
-
-                        if(userQuiz != null)
-                        {
-                            qVM = new QuizVM(ql) { Passing = userQuiz?.Passing };
-                        }
-                        else
-                        {
-                            qVM = new QuizVM(ql) { Passing = "False" };
-                        }
-
-                        list.Add(qVM);
-                    }
+                    list.Add(qVM);
                 }
             });
 
@@ -127,13 +114,9 @@ namespace Server.Database
 
             await Task.Run(() =>
             {
-                using (DataContext db = new DataContext())
-                {
-                    foreach (var q in db.Quizzes)
-                    {
-                        quizList.Add(q);
-                    }  
-                }
+                using var db = new DataContext();
+                foreach (var q in db.Quizzes)
+                    quizList.Add(q);
             });
 
             return quizList;
@@ -148,7 +131,6 @@ namespace Server.Database
         public async Task<string> ExamenationQuiz(Quiz quiz, ConnectedClient client)
         {
             var origQuestions = await GetQuestionsFromQuiz(quiz);
-
             string passing;
 
             foreach (var sentQuestion in quiz.Questions)
@@ -164,18 +146,13 @@ namespace Server.Database
                         if (answer.IsCorrect != sentAnswer.IsCorrect)
                         {
                             passing = "False";
-
                             await SaveQuizResultsForUser(client.Login, quiz, passing);
-
                             return passing;
                         }
                     }
             }
-
             passing = "True";
-
             await SaveQuizResultsForUser(client.Login, quiz, passing);
-
             return passing;
         }
 
@@ -196,35 +173,28 @@ namespace Server.Database
                 {
                     if (quiz is Quiz qz)
                     {
-                        using (DataContext db = new DataContext())
-                        {
-                            listq = db.Questions.Where(i => i.QuizId == qz.Id).Include(q => q.Answers).ToList();
-                        }
+                        using var db = new DataContext();
+
+                        listq = db.Questions.Where(i => i.QuizId == qz.Id).Include(q => q.Answers).ToList();
 
                         if (client != null)
                         {
-                            User? user;
+                            var user = await db.Users.FirstOrDefaultAsync(x => x.UserName == client.Login);
 
-                            using (DataContext db = new DataContext())
+                            if (user != null)
                             {
-                                user = await db.Users.FirstOrDefaultAsync(x => x.UserName == client.Login);
-                            }
+                                var userQuiz = new UserQuiz() { QuizId = qz.Id, UserId = user.Id };
 
-                            if(user != null)
-                                using (DataContext db = new DataContext())
+                                if (!db.UserQuizzes.Contains(new UserQuiz() { QuizId = qz.Id, UserId = user.Id }))
                                 {
-                                    var userQuiz = new UserQuiz() { QuizId = qz.Id, UserId = user.Id };
-
-                                    if (!db.UserQuizzes.Contains(new UserQuiz() { QuizId = qz.Id, UserId = user.Id }))
+                                    if (userQuiz.Passing == "True")
                                     {
-                                        if (userQuiz.Passing == "True")
-                                        {
-                                            userQuiz.Passing = "False";
-                                            _ = await db.UserQuizzes.AddAsync(userQuiz);
-                                            await db.SaveChangesAsync();
-                                        }
+                                        userQuiz.Passing = "False";
+                                        _ = await db.UserQuizzes.AddAsync(userQuiz);
+                                        await db.SaveChangesAsync();
                                     }
                                 }
+                            }
                         }
                     }
                 });
@@ -237,36 +207,30 @@ namespace Server.Database
         /// </summary>
         /// <param name="question">вопрос</param>
         /// <returns></returns>
-        public async Task UpdateQuestionsQuiz(object question)
+        public async Task<int> UpdateQuestionsQuiz(object question)
         {
+            int i = 0;
             if(question != null)
                 await Task.Run(async() =>
                 {
                     if (question is Question q && q.Answers.Any(x => x.IsCorrect == true && q.Answers.All(x => x.AnswerText != null)))
                     {
-                        using (DataContext db = new DataContext())
-                        {
-                            db.Questions.Update(q);
-                            await db.SaveChangesAsync();
-                        }
-                        using (DataContext db = new DataContext())
-                        {
-                            var userQuiz = await db.UserQuizzes.FirstOrDefaultAsync(x => x.QuizId == q.QuizId);
+                        using var db = new DataContext();
+                        db.Questions.Update(q);
 
-                            if (userQuiz != null)
-                            {
-                                userQuiz.Passing = "False";
+                        var userQuiz = await db.UserQuizzes.FirstOrDefaultAsync(x => x.QuizId == q.QuizId);
 
-                                db.Entry(userQuiz).State = EntityState.Modified;
-                                await db.SaveChangesAsync();
-                            }
+                        if (userQuiz != null)
+                        {
+                            userQuiz.Passing = "False";
+                            db.Entry(userQuiz).State = EntityState.Modified;
                         }
+                        i = await db.SaveChangesAsync();
                     }
                     else
-                    {
                         MessageBox.Show("Ответы не должны быть пустыми");
-                    }
                 });
+            return i;
         }
 
         /// <summary>
@@ -274,24 +238,26 @@ namespace Server.Database
         /// </summary>
         /// <param name="quiz">тест</param>
         /// <returns></returns>
-        public async Task AddQuestionsQuiz(object quiz)
+        public async Task<int> AddQuestionsQuiz(object quiz)
         {
+            var i = 0;
             if(quiz != null)
                 await Task.Run(async () =>
                 {
+                    using var db = new DataContext();
                     if (quiz is Quiz qz)
-                        using (DataContext db = new DataContext())
+                    {
+                        var q = new Question()
                         {
-                            var q = new Question()
-                            {
-                                QuestionText = "",
-                                QuizId = qz.Id,
-                                Answers = new ObservableCollection<Answer>()
-                            };
-                            _ = await db.Questions.AddAsync(q);
-                            await db.SaveChangesAsync();
-                        }
+                            QuestionText = "",
+                            QuizId = qz.Id,
+                            Answers = new ObservableCollection<Answer>()
+                        };
+                        _ = await db.Questions.AddAsync(q);
+                        i = await db.SaveChangesAsync();
+                    }
                 });
+            return i;
         }
 
         /// <summary>
@@ -299,18 +265,21 @@ namespace Server.Database
         /// </summary>
         /// <param name="question">вопрос</param>
         /// <returns></returns>
-        public async Task DeleteQuestionQuiz(object question)
+        public async Task<int> DeleteQuestionQuiz(object question)
         {
+            int i = 0;
             if(question != null)
                 await Task.Run(async () =>
                 {
+                    using var db = new DataContext();
                     if (question is Question q)
-                        using (DataContext db = new DataContext())
-                        {
-                            _ = db.Questions.Remove(q);
-                            await db.SaveChangesAsync();
-                        }
+                    {
+                        _ = db.Questions.Remove(q);
+                        i = await db.SaveChangesAsync();
+                    }
                 });
+
+            return i;
         }
 
         /// <summary>
@@ -318,21 +287,22 @@ namespace Server.Database
         /// </summary>
         /// <param name="answer">ответ</param>
         /// <returns></returns>
-        public async Task DeleteAnswerQuestion(object answer)
+        public async Task<int> DeleteAnswerQuestion(object answer)
         {
+            int i = 0;
             if (answer != null)
                 await Task.Run(async () =>
                 {
+                    using var db = new DataContext();
+
                     if (answer is Answer a && a.Id != 0)
                     {
-                        using (DataContext db = new DataContext())
-                        {
-                            var question = await db.Questions.FirstOrDefaultAsync(q => q.Id == a.Question!.Id);
-                            _ = question?.Answers.Remove(a);
-                            await db.SaveChangesAsync();
-                        } 
+                        db.Answers.Remove(db.Answers.Find(a.Id)!);
+                        i = await db.SaveChangesAsync();
                     }
                 });
+
+            return i;
         }
 
         //обработка действий с клиентами ==================================================>
@@ -349,30 +319,20 @@ namespace Server.Database
             if (login != string.Empty)
                 await Task.Run(async () =>
                 {
-                    User? user;
-                    UserQuiz? findUQ;
+                    using var db = new DataContext();
 
-                    using (DataContext db = new DataContext())
+                    var user = await db.Users.FirstOrDefaultAsync(x => x.UserName == login);
+                    var findUQ = await db.UserQuizzes.FirstOrDefaultAsync(x => x.UserId == user!.Id && x.QuizId == quiz.Id);
+
+                    if (user != null)
                     {
-                        user = await db.Users.FirstOrDefaultAsync(x => x.UserName == login);   
-                    }
+                        var newUserQuiz = new UserQuiz() { UserId = user.Id, QuizId = quiz.Id, Passing = passing };
 
-                    using (DataContext db = new DataContext())
-                        findUQ = await db.UserQuizzes.FirstOrDefaultAsync(x => x.UserId == user!.Id && x.QuizId == quiz.Id);
-
-                    using (DataContext db = new DataContext())
-                    {
-                        if (user != null)
-                        {
-                            var newUserQuiz = new UserQuiz() { UserId = user.Id, QuizId = quiz.Id, Passing = passing };
-
-                            if (findUQ == null)
-                                _ = await db.UserQuizzes.AddAsync(newUserQuiz);
-                            else
-                                db.Entry(newUserQuiz).State = EntityState.Modified;
-
-                            await db.SaveChangesAsync();
-                        }
+                        if (findUQ == null)
+                            _ = await db.UserQuizzes.AddAsync(newUserQuiz);
+                        else
+                            db.Entry(newUserQuiz).State = EntityState.Modified;
+                        await db.SaveChangesAsync();
                     }
                 });
         }
@@ -387,17 +347,14 @@ namespace Server.Database
             if (client != null)
                 await Task.Run(async () =>
                 {
+                    using var db = new DataContext();
                     var user = new User() { UserName = client.Login };
+                    var userFind = await db.Users.FirstOrDefaultAsync(x => x.UserName == client.Login);
 
-                    using (DataContext db = new DataContext())
+                    if (userFind == null)
                     {
-                        var userFind = await db.Users.FirstOrDefaultAsync(x => x.UserName == client.Login);
-
-                        if (userFind == null)
-                        {
-                            _ = await db.Users.AddAsync(user);
-                            await db.SaveChangesAsync();
-                        }
+                        _ = await db.Users.AddAsync(user);
+                        await db.SaveChangesAsync();
                     }
                 });
         }

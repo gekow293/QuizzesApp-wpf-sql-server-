@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\Client.csproj": {}
+    "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\Client.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\Client.csproj": {
+    "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\Client.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\Client.csproj",
+        "projectUniqueName": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\Client.csproj",
         "projectName": "Client",
-        "projectPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\Client.csproj",
+        "projectPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\Client.csproj",
         "packagesPath": "C:\\Users\\Tatiana\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Client\\Client\\obj\\",
+        "outputPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Client\\Client\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

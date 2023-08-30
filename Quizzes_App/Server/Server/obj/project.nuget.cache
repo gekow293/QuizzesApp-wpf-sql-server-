@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eldQcyXW+0PvfQKyVgNxkig+o839zaShsvCaGNGOkuIdhX5PZC6kemguSqMdAvO/fCrEtL2WGodYszDCXxG5yQ==",
+  "dgSpecHash": "7fqXqC+Re2caBTI2pk6a4KXNIojJ1gyU8b5mKsUXFVxk5cSE6rDEfq0XPbQzgTNqqYZezye6C7O1K8QKchJk7Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Server\\Server\\Server.csproj",
+  "projectFilePath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Server\\Server\\Server.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Tatiana\\.nuget\\packages\\controlzex\\6.0.0\\controlzex.6.0.0.nupkg.sha512",
     "C:\\Users\\Tatiana\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",

@@ -4,15 +4,15 @@
 winexe
 C#
 .cs
-C:\Users\Tatiana\Desktop\Тестовые задания\WPF-Unity\Client-Server-Tests\Server\Server\obj\Release\net6.0-windows\
+C:\Users\Tatiana\Desktop\Тестовые задания\WPF-Unity\Client-Server-Tests\Quizzes_App\Server\Server\obj\Release\net6.0-windows\
 Server
 none
 false
 TRACE;RELEASE;NET;NET6_0;NETCOREAPP
-C:\Users\Tatiana\Desktop\Тестовые задания\WPF-Unity\Client-Server-Tests\Server\Server\App.xaml
+C:\Users\Tatiana\Desktop\Тестовые задания\WPF-Unity\Client-Server-Tests\Quizzes_App\Server\Server\App.xaml
 2-673892120
 
-34-2116777647
+33-2035441390
 221-272248409
 Views\AuthorizationWindow.xaml;Views\ServerWindow.xaml;
 

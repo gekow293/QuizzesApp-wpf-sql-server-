@@ -2673,11 +2673,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Server\\Server\\Server.csproj",
+      "projectUniqueName": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Server\\Server\\Server.csproj",
       "projectName": "Server",
-      "projectPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Server\\Server\\Server.csproj",
+      "projectPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Server\\Server\\Server.csproj",
       "packagesPath": "C:\\Users\\Tatiana\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Server\\Server\\obj\\",
+      "outputPath": "C:\\Users\\Tatiana\\Desktop\\Тестовые задания\\WPF-Unity\\Client-Server-Tests\\Quizzes_App\\Server\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",

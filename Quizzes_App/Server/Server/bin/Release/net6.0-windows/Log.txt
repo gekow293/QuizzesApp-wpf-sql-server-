@@ -1,3 +1,2 @@
-15:05:28 Server is running
-15:05:49 User_6 successful connected
-15:08:41 User_6: disconnected
+19:24:24 Server is running
+19:25:00 User_6 successful connected
